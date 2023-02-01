@@ -14,12 +14,30 @@ class AssignsController < ApplicationController
     end
   end
 
-  def destroy
-    assign = Assign.find(params[:id])
-    destroy_message = assign_destroy(assign, assign.user)
+  # def destroy
+  #   assign = Assign.find(params[:id])
+  #   destroy_message = assign_destroy(assign, assign.user)
 
-    redirect_to team_url(params[:team_id]), notice: destroy_message
+  #   redirect_to team_url(params[:team_id]), notice: destroy_message
+  # end
+
+  def destroy
+    # binding.pry
+    assign = Assign.find(params[:id])
+    if current_user == assign.team.owner || current_user == assign.user
+      destroy_message = assign_destroy(assign, assign.user)
+      redirect_to team_url(params[:team_id]), notice: destroy_message
+    else
+      redirect_to team_url(params[:team_id]), notice: "リーダーか本人以外は削除できません"
+    end
+    # unless (current_user == assign.team.owner) || (current_user == assign.user)
+      # redirect_to team_url(params[:team_id]), notice: "リーダーか本人以外は削除できません"
+      # return
+    # end
+    # destroy_message = assign_destroy(assign, assign.user)
+    # redirect_to team_url(params[:team_id]), notice: destroy_message
   end
+
 
   private
   def assign_params
